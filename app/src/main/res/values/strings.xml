@@ -69,5 +69,8 @@
     <string name="pref_general_notifications_key">enable_notifications</string>
     <string name="pref_general_notifications_title">Enable Notifications</string>
     <string name="pref_general_notifications_summary">Be notified of the weather changes</string>
+
+    <!--Error messages-->
     <string name="fragment_main_no_weather_error">No Weather Information Available</string>
+    <string name="err_no_internet_connection">No Weather Information Available. The network is not available to fetch weather data.</string>
 </resources>

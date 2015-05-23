@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.spreys.sunshine.app.data.WeatherContract;
 import com.spreys.sunshine.app.data.WeatherContract.LocationEntry;
@@ -206,6 +207,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         if(listView != null){
             listView.smoothScrollToPosition(mPosition);
+        }
+
+        //Check the internet connection
+        if(data.getCount() == 0 && !Utility.IsNetworkConnected(getActivity())){
+            ((TextView)getActivity().findViewById(R.id.fragment_main_empty_list_notification))
+                    .setText(getActivity().getString(R.string.err_no_internet_connection));
         }
     }
 
