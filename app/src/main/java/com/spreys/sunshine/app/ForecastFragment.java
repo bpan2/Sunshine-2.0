@@ -110,12 +110,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         forecastArrayAdapter.setOnePayLayout(this.mOnePaneLayout);
 
         ListView listView = (ListView)rootView.findViewById(R.id.listview_forecast);
+        listView.setEmptyView(rootView.findViewById(R.id.fragment_main_empty_list_notification));
         listView.setAdapter(forecastArrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                ForecastAdapter adapter = (ForecastAdapter)parent.getAdapter();
+                ForecastAdapter adapter = (ForecastAdapter) parent.getAdapter();
                 Cursor cursor = adapter.getCursor();
 
                 mPosition = position;

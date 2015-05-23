@@ -69,4 +69,5 @@
     <string name="pref_general_notifications_key">enable_notifications</string>
     <string name="pref_general_notifications_title">Enable Notifications</string>
     <string name="pref_general_notifications_summary">Be notified of the weather changes</string>
+    <string name="fragment_main_no_weather_error">No Weather Information Available</string>
 </resources>

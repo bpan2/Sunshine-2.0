@@ -11,4 +11,14 @@
         android:divider="@null"
         style="@style/ForecastListViewItem"/>
 
+    <TextView
+        android:visibility="gone"
+        android:padding="16dp"
+        android:text="@string/fragment_main_no_weather_error"
+        android:textColor="@color/error_message_color"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:id="@+id/fragment_main_empty_list_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </FrameLayout>
