@@ -66,14 +66,22 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
-    //Network states
+    //Location statuses
     public static final int LOCATION_STATUS_OK = 0;
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
     public static final int LOCATION_STATUS_SERVER_INVALID = 2;
     public static final int LOCATION_STATUS_UNKNOWN = 3;
+    public static final int LOCATION_STATUS_INVALID = 4;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
+    @IntDef({
+            LOCATION_STATUS_OK,
+            LOCATION_STATUS_SERVER_DOWN,
+            LOCATION_STATUS_SERVER_INVALID,
+            LOCATION_STATUS_UNKNOWN,
+            LOCATION_STATUS_INVALID
+    })
+
     public @interface LocationStatus {}
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
@@ -392,7 +400,16 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         final String OWM_DESCRIPTION = "main";
         final String OWM_WEATHER_ID = "id";
 
+        final String OWN_RESPONSE_CODE = "cod";
+
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+        //Check location was valid
+        if (forecastJson.getString(OWN_RESPONSE_CODE).equals("404")) {
+            setLocationStatus(getContext(), LOCATION_STATUS_INVALID);
+            return;
+        }
+
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
         JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);

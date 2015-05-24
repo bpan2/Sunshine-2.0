@@ -76,4 +76,5 @@
     <string name="err_no_internet_connection">No Weather Information Available. The network is not available to fetch weather data.</string>
     <string name="err_no_invalid_server">No Weather Information Available. Unable to reach the server. Please check if there is an updated for the Sunshine application.</string>
     <string name="err_server_down">No Weather Information Available. Server may be unavailable for maintenance.</string>
+    <string name="err_invalid_location">No Weather Information Available. Location you have entered is invalid.</string>
 </resources>
