@@ -23,9 +23,9 @@ import android.widget.TextView;
 import com.spreys.sunshine.app.data.WeatherContract;
 import com.spreys.sunshine.app.data.WeatherContract.LocationEntry;
 import com.spreys.sunshine.app.data.WeatherContract.WeatherEntry;
+import com.spreys.sunshine.app.sync.SunshineSyncAdapter;
 
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created with Android Studio
@@ -34,7 +34,8 @@ import java.util.Locale;
  * Project: Sunshine
  * Contact by: vlad@spreys.com
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener{
     private ForecastAdapter forecastArrayAdapter;
     private static final int FORECAST_LOADER = 0;
     private static final String POSITION_KEY = "position";
@@ -47,6 +48,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if(null != this.forecastArrayAdapter){
             this.forecastArrayAdapter.setOnePayLayout(mOnePaneLayout);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     // For the forecast view we're showing only a small subset of the stored data.
@@ -134,6 +142,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (mLocation != null && !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }
+
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -210,14 +221,41 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         //Check the internet connection
-        if(data.getCount() == 0 && !Utility.IsNetworkConnected(getActivity())){
-            ((TextView)getActivity().findViewById(R.id.fragment_main_empty_list_notification))
-                    .setText(getActivity().getString(R.string.err_no_internet_connection));
+        if(data.getCount() == 0){
+            updateEmptyView();
         }
+    }
+
+    private void updateEmptyView(){
+        String errorMessage;
+        if(!Utility.IsNetworkConnected(getActivity())){
+            errorMessage = getActivity().getString(R.string.err_no_internet_connection);
+        } else {
+            switch (Utility.getLocationStatus(getActivity())){
+                case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                    errorMessage = getActivity().getString(R.string.err_server_down);
+                    break;
+                case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                    errorMessage = getActivity().getString(R.string.err_no_invalid_server);
+                    break;
+                default:
+                    errorMessage = getActivity().getString(R.string.fragment_main_no_weather_error);
+                    break;
+            }
+        }
+
+        ((TextView)getActivity().findViewById(R.id.fragment_main_empty_list_notification)).setText(errorMessage);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         forecastArrayAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals(getActivity().getString(R.string.pref_location_status_key))){
+            updateEmptyView();
+        }
     }
 }
